@@ -157,6 +157,12 @@ class WorkloadRunner(
                         // Create a SimpleStatement for DDL operations
                         context.session.executeAsync(SimpleStatement.newInstance(op.statement!!))
                     }
+                    is Operation.ClientMutation -> {
+                        op.execute()
+                    }
+                    is Operation.ClientSelect -> {
+                        op.execute()
+                    }
                     else -> {
                         // Ensure bound statement is not null
                         context.session.executeAsync(op.bound!!)
@@ -210,7 +216,12 @@ class WorkloadRunner(
         try {
             for (op in queue.getNextOperation()) {
                 val startNanos = System.nanoTime()
-                val future = context.session.executeAsync(op.bound!!)
+                val future =
+                    when (op) {
+                        is Operation.ClientMutation -> op.execute()
+                        is Operation.ClientSelect -> op.execute()
+                        else -> context.session.executeAsync(op.bound!!)
+                    }
 
                 // Create callback to handle the result
                 val callback =

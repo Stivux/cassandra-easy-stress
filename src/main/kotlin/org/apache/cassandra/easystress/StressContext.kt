@@ -52,8 +52,8 @@ data class StressContext(
             metrics.populate
         } else {
             when (op) {
-                is Operation.SelectStatement -> metrics.selects
-                is Operation.Mutation -> metrics.mutations
+                is Operation.SelectStatement, is Operation.ClientSelect -> metrics.selects
+                is Operation.Mutation, is Operation.ClientMutation -> metrics.mutations
                 is Operation.Deletion -> metrics.deletions
                 is Operation.Stop -> throw OperationStopException()
                 // maybe this should be under DDL, it's a weird case.

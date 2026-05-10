@@ -28,6 +28,7 @@ import org.apache.cassandra.easystress.commands.Run
 import org.apache.cassandra.easystress.generators.Field
 import org.apache.cassandra.easystress.generators.FieldGenerator
 import java.util.Optional
+import java.util.concurrent.CompletionStage
 
 interface IStressRunner {
     fun getNextMutation(partitionKey: PartitionKey): Operation
@@ -50,6 +51,11 @@ interface IStressRunner {
      */
     fun onSuccess(
         op: Operation.Mutation,
+        result: AsyncResultSet?,
+    ) { }
+
+    fun onSuccess(
+        op: Operation.ClientMutation,
         result: AsyncResultSet?,
     ) { }
 
@@ -129,9 +135,18 @@ sealed class Operation(
         val callbackPayload: Any? = null,
     ) : Operation(bound)
 
+    class ClientMutation(
+        val execute: () -> CompletionStage<AsyncResultSet>,
+        val callbackPayload: Any? = null,
+    ) : Operation(null)
+
     class SelectStatement(
         bound: BoundStatement,
     ) : Operation(bound)
+
+    class ClientSelect(
+        val execute: () -> CompletionStage<AsyncResultSet>,
+    ) : Operation(null)
 
     class Deletion(
         bound: BoundStatement,

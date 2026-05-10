@@ -71,6 +71,9 @@ class OperationCallback(
             is Operation.Mutation -> {
                 runner.onSuccess(op, result)
             }
+            is Operation.ClientMutation -> {
+                runner.onSuccess(op, result)
+            }
             is Operation.DDL -> {
                 runner.onSuccess(op, result)
             }
