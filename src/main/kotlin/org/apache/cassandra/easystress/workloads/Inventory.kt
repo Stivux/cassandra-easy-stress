@@ -77,8 +77,7 @@ class Inventory : IStressWorkload {
             Impl.LWT_WORKAROUND -> lwtRunner(context)
         }
 
-    override fun getPopulateOption(args: Run): PopulateOption =
-        PopulateOption.Custom(args.partitionCount, deletes = false)
+    override fun getPopulateOption(args: Run): PopulateOption = PopulateOption.Custom(args.partitionCount, deletes = false)
 
     override fun getPopulatePartitionKeyGenerator(): Optional<PartitionKeyGenerator> {
         var current = 0L
@@ -154,10 +153,10 @@ class Inventory : IStressWorkload {
                 return Operation.Mutation(
                     checkout
                         .bind()
-                        .setString(0, item)   // LET ... WHERE item = ?
-                        .setString(1, item)   // UPDATE ... WHERE item = ?
-                        .setString(2, user)   // INSERT ... VALUES (?, ...)
-                        .setString(3, item),  // INSERT ...          ..., ?, ...)
+                        .setString(0, item) // LET ... WHERE item = ?
+                        .setString(1, item) // UPDATE ... WHERE item = ?
+                        .setString(2, user) // INSERT ... VALUES (?, ...)
+                        .setString(3, item), // INSERT ...          ..., ?, ...)
                 )
             }
 
@@ -267,9 +266,8 @@ class Inventory : IStressWorkload {
                 }
             }
 
-            override fun getNextDelete(partitionKey: PartitionKey): Operation {
+            override fun getNextDelete(partitionKey: PartitionKey): Operation =
                 throw UnsupportedOperationException("Inventory workload does not delete")
-            }
 
             private fun executeCheckout(
                 item: String,
